@@ -44,7 +44,7 @@ set_background = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 #st.markdown(set_background, unsafe_allow_html=True)
 def getEnv():
-    if 'app' in os.listdir():
+    if 'app' in os.getcwd():
         env = "Production"
     else:
         env = "Local"
@@ -286,8 +286,6 @@ with st.container():
     st.header("Convert Image to text")
     Image_file = st.file_uploader("Upload your image file here",type=['png','jpeg','jpg'])
     if(Image_file):
-        st.write("Env Found = " + getEnv())
-        st.write(os.getcwd())
         if(getEnv() == 'Local'): #offline mode
             image = Image.open(BytesIO(Image_file.read()))
             pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
