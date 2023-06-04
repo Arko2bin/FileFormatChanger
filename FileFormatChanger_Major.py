@@ -316,7 +316,7 @@ with st.container():
             image.close()
     with right:
         st.subheader("Cut videos")
-        offline_file = st.file_uploader(label="Upload your video file")
+        offline_file = st.file_uploader(label="Upload your video file",type=['mp4','avi'])
         if(offline_file):
             cutter = offline_file.name
             with open('cutter.mp4', "wb") as f:
