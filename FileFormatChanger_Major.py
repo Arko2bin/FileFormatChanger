@@ -328,7 +328,7 @@ with st.container():
             if(start_time.isnumeric() and end_time.isnumeric()):
                 video = video.subclip(float(start_time),float(end_time))
                 status = st.progress(0)
-                video.write_videofile("Cutted file.mp4",logger=logger)
+                video.write_videofile("cutted file.mp4",logger=logger)
                 st.success("Cutting successfull")
                 st.video("cutted file.mp4")
                 os.remove("cutted file.mp4")
