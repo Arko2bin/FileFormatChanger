@@ -163,7 +163,7 @@ with st.container():
 
 
 with st.container():
-    st.subheader("Choose the service: ")
+    st.header("Choose the service: ")
     left,right = st.columns(2)
     with left:
         st.subheader("Convert video files to audio files: ")
@@ -236,17 +236,20 @@ with st.container():
                 video = "video.mp4"
                 Download = YouTube(online_video_File)
                 file_size = int(Download.streams.filter(only_video=True, file_extension='mp4')[0].filesize)
-                r = requests.get(Download.streams.filter(only_video=True, file_extension='mp4')[0].url,stream=True)
-                st.warning("Downloading your video file...." + str(round(file_size / 1048576, 2)) + " MB")
-                status = st.progress(0)
-                with open(video, 'wb') as f:
-                    downloaded = 0
-                    for data in r.iter_content(chunk_size=1024):
-                        f.write(data)
-                        downloaded += len(data)
-                        progress = (downloaded / file_size) * 100
-                        status.progress(int(progress))
-                st.success("Vido file downloaded successfully")
+                if(round(file_size / 1048576, 2) <= 250):
+                    r = requests.get(Download.streams.filter(only_video=True, file_extension='mp4')[0].url,stream=True)
+                    st.warning("Downloading your video file...." + str(round(file_size / 1048576, 2)) + " MB")
+                    status = st.progress(0)
+                    with open(video, 'wb') as f:
+                        downloaded = 0
+                        for data in r.iter_content(chunk_size=1024):
+                            f.write(data)
+                            downloaded += len(data)
+                            progress = (downloaded / file_size) * 100
+                            status.progress(int(progress))
+                    st.success("Vido file downloaded successfully")
+                else:
+                    st.error("This file is over 250MB max size allowed is 250MB")
             if (video_file):
                 video = video_file.name
                 with open('video.mp4', "wb") as f:
@@ -256,17 +259,20 @@ with st.container():
                 audio = "audio.wav"
                 Download = YouTube(online_audio_File)
                 r = requests.get(Download.streams.filter(type="audio",mime_type="audio/mp4")[0].url,stream=True)
-                file_size = int(Download.streams.filter(type="audio",mime_type="audio/mp4")[0].filesize)
-                st.warning("Downloading your audio file...." + str(round(file_size / 1048576,2)) + " MB")
-                status = st.progress(0)
-                with open(audio, 'wb') as f:
-                    downloaded = 0
-                    for data in r.iter_content(chunk_size=1024):
-                        f.write(data)
-                        downloaded += len(data)
-                        progress = (downloaded / file_size) * 100
-                        status.progress(int(progress))
-                st.success("Audio file downloaded successfully")
+                file_size = int(Download.streams.filter(type="audio", mime_type="audio/mp4")[0].filesize)
+                if(round(file_size / 1048576, 2) <= 250):
+                    st.warning("Downloading your audio file...." + str(round(file_size / 1048576,2)) + " MB")
+                    status = st.progress(0)
+                    with open(audio, 'wb') as f:
+                        downloaded = 0
+                        for data in r.iter_content(chunk_size=1024):
+                            f.write(data)
+                            downloaded += len(data)
+                            progress = (downloaded / file_size) * 100
+                            status.progress(int(progress))
+                    st.success("Audio file downloaded successfully")
+                else:
+                    st.error("This file is over 250MB Max size allowed is 250MB")
             if (audio_file):
                 audio = audio_file.name
                 with open('audio.wav', "wb") as f:
@@ -283,29 +289,53 @@ with st.container():
                 os.remove(audio)
 
 with st.container():
-    st.header("Convert Image to text")
-    Image_file = st.file_uploader("Upload your image file here",type=['png','jpeg','jpg'])
-    if(Image_file):
-        if(getEnv() == 'Local'): #offline mode
-            image = Image.open(BytesIO(Image_file.read()))
-            pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
-            if (pytesseract_zip):
-                with open(pytesseract_zip.name, 'wb') as pytz:
-                    pytz.write(pytesseract_zip.read())
-                with ZipFile(pytesseract_zip, 'r') as zipFile:
-                    zipFile.extractall(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
-                    os.remove(pytesseract_zip.name)
-                pytesseract.pytesseract.tesseract_cmd = os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip",'') + "\\tesseract.exe"
+    left,right = st.columns(2)
+    with left:
+        st.subheader("Convert Image to text")
+        Image_file = st.file_uploader("Upload your image file here",type=['png','jpeg','jpg'])
+        if(Image_file):
+            if(getEnv() == 'Local'): #offline mode
+                image = Image.open(BytesIO(Image_file.read()))
+                pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
+                if (pytesseract_zip):
+                    with open(pytesseract_zip.name, 'wb') as pytz:
+                        pytz.write(pytesseract_zip.read())
+                    with ZipFile(pytesseract_zip, 'r') as zipFile:
+                        zipFile.extractall(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
+                        os.remove(pytesseract_zip.name)
+                    pytesseract.pytesseract.tesseract_cmd = os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip",'') + "\\tesseract.exe"
+                    txt = pytesseract.image_to_string(image, lang='eng')
+                    st.success("Conversion successfull")
+                    st.code(txt)
+                    shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
+            else:
+                image = Image.open(BytesIO(Image_file.read()))
                 txt = pytesseract.image_to_string(image, lang='eng')
                 st.success("Conversion successfull")
                 st.code(txt)
-                shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
-        else:
-            image = Image.open(BytesIO(Image_file.read()))
-            txt = pytesseract.image_to_string(image, lang='eng')
-            st.success("Conversion successfull")
-            st.code(txt)
-        image.close()
+            image.close()
+    with right:
+        st.subheader("Cut videos")
+        offline_file = st.file_uploader(label="Upload your video file")
+        if(offline_file):
+            cutter = offline_file.name
+            with open('cutter.mp4', "wb") as f:
+                f.write(offline_file.read())
+            video = VideoFileClip("cutter.mp4")
+            st.video("cutter.mp4")
+            start_time = st.text_input("Enter start time(s)")
+            end_time = st.text_input("Enter end time(s)")
+            if(start_time.isnumeric() and end_time.isnumeric()):
+                video = video.subclip(float(start_time),float(end_time))
+                status = st.progress(0)
+                video.write_videofile("Cutted file.mp4",logger=logger)
+                st.success("Cutting successfull")
+                st.video("cutted file.mp4")
+                os.remove("cutted file.mp4")
+            video.close()
+            os.remove("cutter.mp4")
+
+
 
 with st.container():
     st.header("Youtube video downloader: ")
