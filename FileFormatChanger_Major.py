@@ -247,7 +247,7 @@ with st.container():
                             downloaded += len(data)
                             progress = (downloaded / file_size) * 100
                             status.progress(int(progress))
-                    st.success("Vido file downloaded successfully")
+                    st.success("Video file downloaded successfully")
                 else:
                     st.error("This file is over 250MB max size allowed is 250MB")
             if (video_file):
@@ -291,31 +291,29 @@ with st.container():
 with st.container():
     left,right = st.columns(2)
     with left:
-        st.subheader("Convert Image to text")
-        Image_file = st.file_uploader("Upload your image file here",type=['png','jpeg','jpg'])
-        if(Image_file):
-            if(getEnv() == 'Local'): #offline mode
-                image = Image.open(BytesIO(Image_file.read()))
-                pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
-                if (pytesseract_zip):
-                    with open(pytesseract_zip.name, 'wb') as pytz:
-                        pytz.write(pytesseract_zip.read())
-                    with ZipFile(pytesseract_zip, 'r') as zipFile:
-                        zipFile.extractall(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
-                        os.remove(pytesseract_zip.name)
-                    pytesseract.pytesseract.tesseract_cmd = os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip",'') + "\\tesseract.exe"
-                    txt = pytesseract.image_to_string(image, lang='eng')
-                    st.success("Conversion successfull")
-                    st.code(txt)
-                    shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
-            else:
-                image = Image.open(BytesIO(Image_file.read()))
-                txt = pytesseract.image_to_string(image, lang='eng')
-                st.success("Conversion successfull")
-                st.code(txt)
-            image.close()
+        st.subheader("Join Videos:")
+        videos = st.file_uploader(label="Upload the video files",type=['mp4','avi'],accept_multiple_files=True)
+        if(videos):
+            clips = []
+            counter = 0
+            for video in videos:
+                with open("subclip"+str(counter)+".mp4",'wb') as f:
+                    f.write(video.read())
+                clips.append(VideoFileClip("subclip"+str(counter)+".mp4"))
+                counter += 1
+            output = "subclip"+str(counter)+"_joined.mp4"
+            final = concatenate_videoclips(clips, method='compose')
+            status = st.progress(0)
+            final.write_videofile(output, logger=logger)
+            st.video(output)
+            os.remove(output)
+            counter = 0
+            for video in videos:
+                os.remove("subclip"+str(counter)+".mp4")
+                counter += 1
+
     with right:
-        st.subheader("Cut videos")
+        st.subheader("Cut videos:")
         offline_file = st.file_uploader(label="Upload your video file",type=['mp4','avi'])
         if(offline_file):
             cutter = offline_file.name
@@ -335,7 +333,31 @@ with st.container():
             video.close()
             os.remove("cutter.mp4")
 
-
+with st.container():
+    st.subheader("Convert Image to text:")
+    Image_file = st.file_uploader("Upload your image file here", type=['png', 'jpeg', 'jpg'])
+    if (Image_file):
+        if (getEnv() == 'Local'):  # offline mode
+            image = Image.open(BytesIO(Image_file.read()))
+            pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
+            if (pytesseract_zip):
+                with open(pytesseract_zip.name, 'wb') as pytz:
+                    pytz.write(pytesseract_zip.read())
+                with ZipFile(pytesseract_zip, 'r') as zipFile:
+                    zipFile.extractall(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
+                    os.remove(pytesseract_zip.name)
+                pytesseract.pytesseract.tesseract_cmd = os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip",
+                                                                                                          '') + "\\tesseract.exe"
+                txt = pytesseract.image_to_string(image, lang='eng')
+                st.success("Conversion successfull")
+                st.code(txt)
+                shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
+        else:
+            image = Image.open(BytesIO(Image_file.read()))
+            txt = pytesseract.image_to_string(image, lang='eng')
+            st.success("Conversion successfull")
+            st.code(txt)
+        image.close()
 
 with st.container():
     st.header("Youtube video downloader: ")
