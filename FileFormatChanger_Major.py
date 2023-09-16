@@ -53,7 +53,7 @@ def Youtube_casts(url):
     Download = YouTube(url)
     for resolution in Download.streams.filter(mime_type="video/mp4"):
         st.write("[Download => " + str(resolution.resolution) + "](" + Download.streams.filter(resolution=resolution)[0].url +")")
-    st.error("High Resolution Downloads are currently not available")
+    st.error("High Resolution Downloads are currently not available you can try our desktop app for windows [click here](https://drive.google.com/file/d/1RJgNWxvdYOHDYNvsBA1WOq2ld8gyS00h/view?usp=sharing)")
 
 def video2audio(video):
     output = "audio_file.wav"
@@ -392,6 +392,6 @@ with st.container():
     with right_middle:
         st.subheader("Want to get more feature?")
         st.write("Try our desktop app version: ")
-        st.write("[Download from here](https://drive.google.com/drive/folders/1-Rb5KRR5PLQXCYZAwlL1pnJiYiU7zSGI?usp=sharing)")
+        st.write("[Download from here](https://drive.google.com/file/d/1RJgNWxvdYOHDYNvsBA1WOq2ld8gyS00h/view?usp=sharing)")
     with right:
         st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
