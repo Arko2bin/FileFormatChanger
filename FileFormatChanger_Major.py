@@ -53,7 +53,7 @@ def Youtube_casts(url):
     Download = YouTube(url)
     for resolution in Download.streams.filter(mime_type="video/mp4"):
         st.write("[Download => " + str(resolution.resolution) + "](" + Download.streams.filter(resolution=resolution)[0].url +")")
-    st.error("High Resolution Downloads are currently not available you can try our desktop app for windows [click here](https://drive.google.com/file/d/1RJgNWxvdYOHDYNvsBA1WOq2ld8gyS00h/view?usp=sharing)")
+    st.error("High Resolution Downloads are currently not available you can try our desktop app for windows [click here](https://drive.google.com/file/d/1YrfxPCaXbkq_lYmPIpNdUO3YTnj9hMED/view?usp=sharing)")
 
 def video2audio(video):
     output = "audio_file.wav"
@@ -110,56 +110,6 @@ with st.container():
     st.title("Format Changer App")
     st.header("Hi I am your app to change the format of your files: ")
     st.write("---")
-    st.sidebar.header("Admin Portal")
-    id = st.sidebar.text_input("Enter Login Id: ")
-    password = hash(st.sidebar.text_input("Enter Password",type="password"))
-    true_password = hash("PassFile@2023#")
-    if(id and password):
-        if(password == true_password):
-            st.sidebar.success("Successfully loggged in as admin")
-            with st.expander("ADMIN PORTAL"):
-                size = 0
-                for items in os.listdir():
-                    file_size = os.stat(items).st_size / (1024 * 1024)
-                    size += file_size
-                if(800 - size < 200):
-                    st.error(str(round(800 - size,2)) + " MB/800 MB")
-                elif (800 - size > 200 and 800 - size < 600):
-                    st.warning(str(round(800 - size,2)) + " MB/800 MB")
-                elif (800 - size > 600):
-                    st.success(str(round(800 - size,2)) + " MB/800 MB")
-                file_uploads = st.file_uploader("Upload your file",accept_multiple_files=True)
-                if file_uploads:
-                    for upload in file_uploads:
-                        with open(upload.name, "wb") as f:
-                            f.write(upload.read())
-                    st.success("uploaded successfully!")
-                files = ["--select--"]
-                show_files = ["--select--"]
-                for items in os.listdir(os.getcwd()):
-                    if (".idea" in items):
-                        pass
-                    elif ("requirements.txt" in items):
-                        pass
-                    elif ("packages.txt" in items):
-                        pass
-                    elif ("FileFormatChanger_Major.py" in items):
-                        pass
-                    elif ("FileFormatChanger_Major - OlderVersion backup.py" in items):
-                        pass
-                    elif (".git" in items):
-                        pass
-                    elif (".streamlit" in items):
-                        pass
-                    else:
-                        files.append(items)
-                        show_files.append(items + " " + str(round(os.stat(items).st_size / (1024*1024),2)) + " MB")
-                sec = st.selectbox("Choose the file you want to delete: ",show_files)
-                if(sec != "--select--"):
-                    os.remove(files[show_files.index(sec)])
-                    st.success("Successfully deleted " + sec)
-        else:
-            st.sidebar.error("Incorrect id/password")
 
 
 with st.container():
@@ -392,6 +342,6 @@ with st.container():
     with right_middle:
         st.subheader("Want to get more feature?")
         st.write("Try our desktop app version: ")
-        st.write("[Download from here](https://drive.google.com/file/d/1RJgNWxvdYOHDYNvsBA1WOq2ld8gyS00h/view?usp=sharing)")
+        st.write("[Download from here](https://drive.google.com/file/d/1YrfxPCaXbkq_lYmPIpNdUO3YTnj9hMED/view?usp=sharing)")
     with right:
         st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
