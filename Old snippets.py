@@ -1,3 +1,4 @@
+!pip install opencv-python==3.4.13.47
 import streamlit as st
 import os
 st.sidebar.header("Admin Portal")
@@ -50,3 +51,4 @@ if(id and password):
                 st.success("Successfully deleted " + sec)
     else:
         st.sidebar.error("Incorrect id/password")
+

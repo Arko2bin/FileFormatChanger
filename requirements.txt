@@ -1,5 +1,4 @@
 moviepy==1.0.3
-opencv-python==3.4.13.47
 Pillow==10.0.1
 proglog==0.1.10
 pytesseract==0.3.10
