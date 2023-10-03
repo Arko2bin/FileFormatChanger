@@ -61,7 +61,7 @@ def Youtube_casts(url):
     Download = YouTube(url)
     for resolution in Download.streams.filter(mime_type="video/mp4"):
         st.write("[Download => " + str(resolution.resolution) + "](" + Download.streams.filter(resolution=resolution)[0].url +")")
-    st.error("High Resolution Downloads are currently not available you can try our desktop app for windows [click here](https://drive.google.com/file/d/1YrfxPCaXbkq_lYmPIpNdUO3YTnj9hMED/view?usp=sharing)")
+    st.error("Youtube is not supporting high resolution downloading directly from web, \nhowever you can download high resolution videos directly from youtube using our desktop app for windows[click here](https://drive.google.com/file/d/1YrfxPCaXbkq_lYmPIpNdUO3YTnj9hMED/view?usp=sharing)")
 
 def video2audio(video):
     output = "audio_file.wav"
