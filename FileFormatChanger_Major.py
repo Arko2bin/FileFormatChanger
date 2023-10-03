@@ -1,5 +1,6 @@
 import shutil
 from io import BytesIO
+from rembg import remove
 from moviepy.video.fx.speedx import speedx
 import streamlit as st
 from moviepy.editor import *
@@ -43,6 +44,13 @@ set_background = """
                 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 #st.markdown(set_background, unsafe_allow_html=True)
+delete_list = ['jpg','jpeg','png','mp4','mp3','wav','avi']
+for file in os.listdir():
+    if file.split('.')[len(file.split('.'))-1] in delete_list:
+        os.remove(file)
+    else:
+        pass
+
 def getEnv():
     if 'app' or 'mount' in os.getcwd():
         env = "Production"
@@ -284,30 +292,41 @@ with st.container():
             os.remove("cutter.mp4")
 
 with st.container():
-    st.subheader("Convert Image to text:")
-    Image_file = st.file_uploader("Upload your image file here", type=['png', 'jpeg', 'jpg'])
-    if (Image_file):
-        if (getEnv() == 'Local'):  # offline mode
-            image = Image.open(BytesIO(Image_file.read()))
-            pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
-            if (pytesseract_zip):
-                with open(pytesseract_zip.name, 'wb') as pytz:
-                    pytz.write(pytesseract_zip.read())
-                with ZipFile(pytesseract_zip, 'r') as zipFile:
-                    zipFile.extractall(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
-                    os.remove(pytesseract_zip.name)
-                pytesseract.pytesseract.tesseract_cmd = os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip",
-                                                                                                          '') + "\\tesseract.exe"
+    st.header("AI Tools: ")
+    col1,col2 = st.columns(2)
+    with col1:
+        st.subheader("Convert Image to text:")
+        Image_file = st.file_uploader("Upload your image file here", type=['png', 'jpeg', 'jpg'])
+        if (Image_file):
+            if (getEnv() == 'Local'):  # offline mode
+                image = Image.open(BytesIO(Image_file.read()))
+                pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
+                if (pytesseract_zip):
+                    with open(pytesseract_zip.name, 'wb') as pytz:
+                        pytz.write(pytesseract_zip.read())
+                    with ZipFile(pytesseract_zip, 'r') as zipFile:
+                        zipFile.extractall(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
+                        os.remove(pytesseract_zip.name)
+                    pytesseract.pytesseract.tesseract_cmd = os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip",
+                                                                                                              '') + "\\tesseract.exe"
+                    txt = pytesseract.image_to_string(image, lang='eng')
+                    st.success("Conversion successfull")
+                    st.code(txt)
+                    shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
+            else:
+                image = Image.open(BytesIO(Image_file.read()))
                 txt = pytesseract.image_to_string(image, lang='eng')
                 st.success("Conversion successfull")
                 st.code(txt)
-                shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
-        else:
-            image = Image.open(BytesIO(Image_file.read()))
-            txt = pytesseract.image_to_string(image, lang='eng')
-            st.success("Conversion successfull")
-            st.code(txt)
-        image.close()
+            image.close()
+    with col2:
+        st.subheader("Image Background remover")
+        image_file = st.file_uploader("Upload the image file",type=['jpg','jpeg','png'])
+        if(image_file):
+            image = Image.open(BytesIO(image_file.read()))
+            output = remove(image)
+            st.image(output)
+            st.success("Success!")
 
 with st.container():
     st.header("Youtube video downloader: ")
