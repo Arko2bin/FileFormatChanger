@@ -1,4 +1,4 @@
-!pip install opencv-python==3.4.13.47
+#!pip install opencv-python==3.4.13.47
 import streamlit as st
 import os
 st.sidebar.header("Admin Portal")
