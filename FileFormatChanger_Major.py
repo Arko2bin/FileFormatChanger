@@ -61,7 +61,7 @@ def Youtube_casts(url):
     Download = YouTube(url)
     for resolution in Download.streams.filter(mime_type="video/mp4"):
         st.write("[Download => " + str(resolution.resolution) + "](" + Download.streams.filter(resolution=resolution)[0].url +")")
-    st.error("Youtube is not supporting high resolution downloading directly from web, \nhowever you can download high resolution videos directly from youtube using our desktop app for windows[click here](https://drive.google.com/file/d/1YrfxPCaXbkq_lYmPIpNdUO3YTnj9hMED/view?usp=sharing)")
+    st.error("Youtube is not supporting high resolution downloading directly from web, \nhowever you can download high resolution videos directly from youtube using our desktop app for windows[click here](https://drive.google.com/file/d/1tO98yeTmNU7Ys0_qvmB9P_dTa13-RbKx/view?usp=sharing)")
 
 def video2audio(video):
     output = "audio_file.wav"
@@ -361,6 +361,6 @@ with st.container():
     with right_middle:
         st.subheader("Want to get more feature?")
         st.write("Try our desktop app version: ")
-        st.write("[Download from here](https://drive.google.com/file/d/1YrfxPCaXbkq_lYmPIpNdUO3YTnj9hMED/view?usp=sharing)")
+        st.write("[Download from here](https://drive.google.com/file/d/1tO98yeTmNU7Ys0_qvmB9P_dTa13-RbKx/view?usp=sharing)")
     with right:
         st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
