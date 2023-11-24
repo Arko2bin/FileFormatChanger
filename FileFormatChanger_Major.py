@@ -78,39 +78,47 @@ def mix_vid(video,audio):
     result = False
     Video = VideoFileClip(video)
     Audio = AudioFileClip(audio)
-    vid_duration = Video.duration
-    audio_duration = Audio.duration
-    output = 'final_video.mp4'
-    final_clip = None
-    if (vid_duration < audio_duration or vid_duration > audio_duration):
-        conv_type = ['--Select--', 'Merge files anyway', 'Cut the extra portion and merge']
-        select_type = st.selectbox("Your video and audio length are not similar choose the below action: ",conv_type)
-        if(select_type != "--Select--"):
-            if(select_type == 'Merge files anyway'):
-                Audio = AudioFileClip(audio)
-                Video = VideoFileClip(video).fx(speedx, vid_duration / audio_duration)
-                final_clip = Video.set_audio(Audio)
-            elif(select_type == 'Cut the extra portion and merge'):
-                if(vid_duration > audio_duration):
-                    Audio = AudioFileClip(audio)
-                    Video = VideoFileClip(video).subclip(0,Audio.duration)
+    print(Video.size)
+    orientation = st.selectbox("Choose output video orientation",["--select--","Landscape","Potrait"])
+    if(orientation != '--select--'):
+        if (orientation == "Landscape"):
+            if (Video.size[0] > Video.size[1]):
+                Video = Video.resize(Video.size)
+            else:
+                Video = Video.resize((Video.size[1], Video.size[0]))
+        elif (orientation == "Potrait"):
+            if (Video.size[0] < Video.size[1]):
+                Video = Video.resize(Video.size)
+            else:
+                Video = Video.resize((Video.size[1], Video.size[0]))
+        vid_duration = Video.duration
+        audio_duration = Audio.duration
+        output = 'final_video.mp4'
+        final_clip = None
+        if (vid_duration < audio_duration or vid_duration > audio_duration):
+            conv_type = ['--Select--', 'Merge files anyway', 'Cut the extra portion and merge']
+            select_type = st.selectbox("Your video and audio length are not similar choose the below action: ",conv_type)
+            if(select_type != "--Select--"):
+                if(select_type == 'Merge files anyway'):
+                    Video = Video.fx(speedx, vid_duration / audio_duration)
                     final_clip = Video.set_audio(Audio)
-                elif(audio_duration > vid_duration):
-                    Video = VideoFileClip(video)
-                    Audio = AudioFileClip(audio).subclip(0,Video.duration)
-                    final_clip = Video.set_audio(Audio)
-    else:
-        Video = VideoFileClip(video)
-        Audio = AudioFileClip(audio)
-        final_clip = Video.set_audio(Audio)
-    if(final_clip):
-        final_clip.write_videofile(output, logger=logger)
-        st.success("Successfull conversion")
-        st.video(output)  # shows the video
-        os.remove(output)
-        Video.close()
-        Audio.close()
-        result = True
+                elif(select_type == 'Cut the extra portion and merge'):
+                    if(vid_duration > audio_duration):
+                        Video = Video.subclip(0,Audio.duration)
+                        final_clip = Video.set_audio(Audio)
+                    elif(audio_duration > vid_duration):
+                        Audio = Audio.subclip(0,Video.duration)
+                        final_clip = Video.set_audio(Audio)
+        else:
+            final_clip = Video.set_audio(Audio)
+        if(final_clip):
+            final_clip.write_videofile(output, logger=logger)
+            st.success("Successfull conversion")
+            st.video(output)  # shows the video
+            os.remove(output)
+            Video.close()
+            Audio.close()
+            result = True
     return result
 
 
