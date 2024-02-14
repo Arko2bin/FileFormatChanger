@@ -44,12 +44,6 @@ set_background = """
                 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 #st.markdown(set_background, unsafe_allow_html=True)
-delete_list = ['jpg','jpeg','png','mp4','mp3','wav','avi']
-for file in os.listdir():
-    if file.split('.')[len(file.split('.'))-1] in delete_list:
-        os.remove(file)
-    else:
-        pass
 
 def getEnv():
     if 'app' or 'mount' in os.getcwd():
@@ -121,6 +115,21 @@ def mix_vid(video,audio):
             result = True
     return result
 
+def Cut_Videos(video,start_time,end_time):
+    video = VideoFileClip(video)
+    if (start_time.isnumeric() and end_time.isnumeric()):
+        if(float(start_time) > float(end_time)):
+            st.error("Start time can not be greater than end time")
+        elif(float(end_time) > video.duration):
+            st.error("End time can not be greater than entire video duration")
+        else:
+            video = video.subclip(float(start_time), float(end_time))
+            video.write_videofile("cutted file.mp4", logger=logger)
+            st.success("Cutting successfull")
+            st.video("cutted file.mp4")
+            os.remove("cutted file.mp4")
+            video.close()
+            return True
 
 with st.container():
     st.title("Format Changer App")
@@ -217,7 +226,7 @@ with st.container():
                 else:
                     st.error("This file is over 250MB max size allowed is 250MB")
             if (video_file):
-                video = video_file.name
+                video = "video.mp4"
                 with open('video.mp4', "wb") as f:
                     f.write(video_file.read())
         if('audio.wav' not in os.listdir()):
@@ -240,7 +249,7 @@ with st.container():
                 else:
                     st.error("This file is over 250MB Max size allowed is 250MB")
             if (audio_file):
-                audio = audio_file.name
+                audio = "audio.wav"
                 with open('audio.wav', "wb") as f:
                     f.write(audio_file.read())
 
@@ -280,23 +289,43 @@ with st.container():
 
     with right:
         st.subheader("Cut videos:")
+        result = ""
+        start_time = ""
+        end_time = ""
         offline_file = st.file_uploader(label="Upload your video file",type=['mp4','avi'])
-        if(offline_file):
-            cutter = offline_file.name
-            with open('cutter.mp4', "wb") as f:
+        st.write("OR")
+        online_File = st.text_input("Enter youtube link: ")
+        if(online_File and "cutter.mp4" not in os.listdir()):
+            video = "cutter.mp4"
+            Download = YouTube(online_File)
+            file_size = int(Download.streams.get_highest_resolution().filesize)
+            if (round(file_size / 1048576, 2) <= 250):
+                r = requests.get(Download.streams.get_highest_resolution().url, stream=True)
+                st.warning("Downloading your video file...." + str(round(file_size / 1048576, 2)) + " MB")
+                status = st.progress(0)
+                with open(video, 'wb') as f:
+                    downloaded = 0
+                    for data in r.iter_content(chunk_size=1024):
+                        f.write(data)
+                        downloaded += len(data)
+                        progress = (downloaded / file_size) * 100
+                        status.progress(int(progress))
+                st.success("Video file downloaded successfully")
+                st.video("cutter.mp4")
+            else:
+                st.error("This file is over 250MB max size allowed is 250MB")
+        elif(offline_file and "cutter.mp4" not in os.listdir()):
+            video = "cutter.mp4"
+            with open(video, "wb") as f:
                 f.write(offline_file.read())
-            video = VideoFileClip("cutter.mp4")
             st.video("cutter.mp4")
+        if("cutter.mp4" in os.listdir()):
             start_time = st.text_input("Enter start time(s)")
             end_time = st.text_input("Enter end time(s)")
-            if(start_time.isnumeric() and end_time.isnumeric()):
-                video = video.subclip(float(start_time),float(end_time))
-                status = st.progress(0)
-                video.write_videofile("cutted file.mp4",logger=logger)
-                st.success("Cutting successfull")
-                st.video("cutted file.mp4")
-                os.remove("cutted file.mp4")
-            video.close()
+        if("cutter.mp4" in os.listdir() and start_time and end_time):
+            status = st.progress(0)
+            result = Cut_Videos("cutter.mp4",start_time,end_time)
+        if (result == True):
             os.remove("cutter.mp4")
 
 with st.container():
