@@ -53,9 +53,9 @@ def getEnv():
     return env
 def Youtube_casts(url):
     Download = YouTube(url)
-    for resolution in Download.streams.filter(mime_type="video/mp4"):
-        st.write("[Download => " + str(resolution.resolution) + "](" + Download.streams.filter(resolution=resolution)[0].url +")")
-    st.error("Youtube is not supporting high resolution downloading directly from web, \nhowever you can download high resolution videos directly from youtube using our desktop app for windows[click here](https://drive.google.com/file/d/1AmoNrOfeatksf1fx5R5scG6gJhLvSZhF/view?usp=sharing)")
+    for video in Download.streams.filter(progressive=True):
+        st.write("[Download => " + str(video.resolution) + " (" + str(int(video.filesize/1048576)) + "MB)](" + video.url +")")
+    st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/1AmoNrOfeatksf1fx5R5scG6gJhLvSZhF/view?usp=sharing)")
 
 def video2audio(video):
     output = "audio_file.wav"
