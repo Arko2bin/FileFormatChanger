@@ -55,7 +55,7 @@ def Youtube_casts(url):
     Download = YouTube(url)
     for video in Download.streams.filter(progressive=True):
         st.write("[Download => " + str(video.resolution) + " (" + str(int(video.filesize/1048576)) + "MB)](" + video.url +")")
-    st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/1AmoNrOfeatksf1fx5R5scG6gJhLvSZhF/view?usp=sharing)")
+    st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/1KO_Mk_p5Mim1_GL96ToED9ZkZjmOcDK7/view?usp=sharing)")
 
 def video2audio(video):
     output = "audio_file.wav"
@@ -398,6 +398,6 @@ with st.container():
     with right_middle:
         st.subheader("Size issue on the website?")
         st.write("Try our desktop app version: ")
-        st.write("[Download from here](https://drive.google.com/file/d/1AmoNrOfeatksf1fx5R5scG6gJhLvSZhF/view?usp=sharing)")
+        st.write("[Download from here](https://drive.google.com/file/d/1KO_Mk_p5Mim1_GL96ToED9ZkZjmOcDK7/view?usp=sharing)")
     with right:
         st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
