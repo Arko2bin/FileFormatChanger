@@ -51,10 +51,32 @@ def getEnv():
     else:
         env = "Local"
     return env
+
+def video_filesize(video):
+    if(round(video.filesize / (1024*1024*1024),2) > 1):
+        return str(round(video.filesize / (1024 * 1024 * 1024),2)) + "GB"
+    elif(round(video.filesize / (1024*1024),2) > 1):
+        return str(round(video.filesize / (1024 * 1024), 2)) + "MB"
+    else:
+        return str(round(video.filesize / (1024), 2)) + "KB"
 def Youtube_casts(url):
+    cols = st.columns(4)
+    s = 0
     Download = YouTube(url)
-    for video in Download.streams.filter(progressive=True):
-        st.write("[Download => " + str(video.resolution) + " (" + str(int(video.filesize/1048576)) + "MB)](" + video.url +")")
+    for video in Download.streams:
+        with cols[s]:
+            if(video.is_progressive):
+                st.write("[Download => " + str(video.resolution) + " (" +
+                    video_filesize(video) + ")(:sound:)](" + video.url + ")")
+            elif(video.resolution == None):
+                st.write("[Download => 	:x: (" +
+                         video_filesize(video) + ")(:sound:)](" + video.url + ")")
+            else:
+                st.write("[Download => " + str(video.resolution) + " (" +
+                         video_filesize(video) + ")(:mute:)](" + video.url + ")")
+            s += 1
+            if(s > 3):
+                s = 0
     st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/1KO_Mk_p5Mim1_GL96ToED9ZkZjmOcDK7/view?usp=sharing)")
 
 def video2audio(video):
