@@ -7,6 +7,7 @@ from moviepy.editor import *
 from proglog import ProgressBarLogger
 from pytube import YouTube
 from pytube import Playlist
+from pytube.innertube import _default_clients
 from zipfile import ZipFile
 from PIL import Image
 import pytesseract
@@ -52,6 +53,7 @@ def getEnv():
         env = "Local"
     return env
 
+_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 def video_filesize(video):
     if(round(video.filesize / (1024*1024*1024),2) > 1):
         return str(round(video.filesize / (1024 * 1024 * 1024),2)) + "GB"
