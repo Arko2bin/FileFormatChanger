@@ -51,6 +51,7 @@ def getEnv():
         env = "Production"
     else:
         env = "Local"
+    st.write(env)
     return env
 
 _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
