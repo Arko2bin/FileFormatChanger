@@ -47,7 +47,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 #st.markdown(set_background, unsafe_allow_html=True)
 
 def getEnv():
-    if 'app' or 'mount' in os.getcwd():
+    if ('app' or 'mount') in os.getcwd():
         env = "Production"
     else:
         env = "Local"
@@ -360,27 +360,33 @@ with st.container():
         st.subheader("Convert Image to text:")
         Image_file = st.file_uploader("Upload your image file here", type=['png', 'jpeg', 'jpg'])
         if (Image_file):
-            if (getEnv() == 'Local'):  # offline mode
-                image = Image.open(BytesIO(Image_file.read()))
-                pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
-                if (pytesseract_zip):
-                    with open(pytesseract_zip.name, 'wb') as pytz:
-                        pytz.write(pytesseract_zip.read())
-                    with ZipFile(pytesseract_zip, 'r') as zipFile:
-                        zipFile.extractall(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
-                        os.remove(pytesseract_zip.name)
-                    pytesseract.pytesseract.tesseract_cmd = os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip",
-                                                                                                              '') + "\\tesseract.exe"
-                    txt = pytesseract.image_to_string(image, lang='eng')
+            lang = st.selectbox("Choose your image language",['--select--','English','Bengali'])
+            if(lang != "--select--"):
+                if(lang == 'English'):
+                    lang = 'eng'
+                elif(lang == 'Bengali'):
+                    lang = 'ben'
+                if (getEnv() == 'Local'):  # offline mode
+                    image = Image.open(BytesIO(Image_file.read()))
+                    pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
+                    if (pytesseract_zip):
+                        with open(pytesseract_zip.name, 'wb') as pytz:
+                            pytz.write(pytesseract_zip.read())
+                        with ZipFile(pytesseract_zip, 'r') as zipFile:
+                            zipFile.extractall(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
+                            os.remove(pytesseract_zip.name)
+                        pytesseract.pytesseract.tesseract_cmd = os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip",
+                                                                                                                  '') + "\\tesseract.exe"
+                        txt = pytesseract.image_to_string(image, lang=lang)
+                        st.success("Conversion successfull")
+                        st.code(txt)
+                        shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
+                else:
+                    image = Image.open(BytesIO(Image_file.read()))
+                    txt = pytesseract.image_to_string(image, lang=lang)
                     st.success("Conversion successfull")
                     st.code(txt)
-                    shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
-            else:
-                image = Image.open(BytesIO(Image_file.read()))
-                txt = pytesseract.image_to_string(image, lang='eng')
-                st.success("Conversion successfull")
-                st.code(txt)
-            image.close()
+                image.close()
     with col2:
         st.subheader("Image Background remover")
         image_file = st.file_uploader("Upload the image file",type=['jpg','jpeg','png'])
