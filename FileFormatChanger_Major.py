@@ -47,12 +47,10 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 #st.markdown(set_background, unsafe_allow_html=True)
 
 def getEnv():
-    st.write(os.getcwd())
     if 'mount' in os.getcwd():
         env = "Production"
     else:
         env = "Local"
-    st.write(env)
     return env
 
 _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
