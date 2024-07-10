@@ -48,7 +48,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 def getEnv():
     st.write(os.getcwd())
-    if ('app' or 'mount') in os.getcwd():
+    if 'mount' in os.getcwd():
         env = "Production"
     else:
         env = "Local"
