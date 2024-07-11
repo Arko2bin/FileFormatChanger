@@ -1,6 +1,6 @@
 gTTS==2.5.1
 moviepy==1.0.3
-Pillow==10.4.0
+Pillow==9.5.0
 proglog==0.1.10
 pytesseract==0.3.10
 pytube==15.0.0
