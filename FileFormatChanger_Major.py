@@ -10,6 +10,7 @@ from pytube import Playlist
 from pytube.innertube import _default_clients
 from zipfile import ZipFile
 from PIL import Image
+from gtts import gTTS
 import pytesseract
 import requests
 import os
@@ -28,6 +29,7 @@ class MyBarLogger(ProgressBarLogger):
 
 st.set_page_config(page_title='File Converter App',layout="wide",page_icon="https://cdn.movavi.io/pages/0012/67/f97f4053080a1d1ecc3e23c4095de7e73522ea17.png")
 logger = MyBarLogger()
+_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 hide_streamlit_style = """
                 <style>
                 #MainMenu {visibility: hidden;}
@@ -53,7 +55,7 @@ def getEnv():
         env = "Local"
     return env
 
-_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
+
 def video_filesize(video):
     if(round(video.filesize / (1024*1024*1024),2) > 1):
         return str(round(video.filesize / (1024 * 1024 * 1024),2)) + "GB"
@@ -360,12 +362,17 @@ with st.container():
         st.subheader("Convert Image to text:")
         Image_file = st.file_uploader("Upload your image file here", type=['png', 'jpeg', 'jpg'])
         if (Image_file):
-            lang = st.selectbox("Choose your image language",['--select--','English','Bengali'])
+            lang = st.selectbox("Choose your image language",['--select--','English','Bengali','Hindi'])
             if(lang != "--select--"):
                 if(lang == 'English'):
                     lang = 'eng'
+                    vlang = 'en'
                 elif(lang == 'Bengali'):
                     lang = 'ben'
+                    vlang = 'bn'
+                elif (lang == 'Hindi'):
+                    lang = 'hin'
+                    vlang = 'hi'
                 if (getEnv() == 'Local'):  # offline mode
                     image = Image.open(BytesIO(Image_file.read()))
                     pytesseract_zip = st.file_uploader("Upload your pytesseract file", type=['zip'])
@@ -380,6 +387,11 @@ with st.container():
                         txt = pytesseract.image_to_string(image, lang=lang)
                         st.success("Conversion successfull")
                         st.code(txt)
+                        if(st.button("Read Out:loud_sound:")):
+                            context = gTTS(text=txt,slow=False,lang=vlang)
+                            context.save('t2v.mp3')
+                            st.audio('t2v.mp3')
+                            os.remove('t2v.mp3')
                         shutil.rmtree(os.getcwd() + "\\" + pytesseract_zip.name.replace(".zip", ''))
                 else:
                     image = Image.open(BytesIO(Image_file.read()))
