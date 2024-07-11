@@ -398,6 +398,11 @@ with st.container():
                     txt = pytesseract.image_to_string(image, lang=lang)
                     st.success("Conversion successfull")
                     st.code(txt)
+                    if (st.button("Read Out:loud_sound:")):
+                        context = gTTS(text=txt, slow=False, lang=vlang)
+                        context.save('t2v.mp3')
+                        st.audio('t2v.mp3')
+                        os.remove('t2v.mp3')
                 image.close()
     with col2:
         st.subheader("Image Background remover")
