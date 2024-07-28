@@ -81,7 +81,7 @@ def Youtube_casts(url):
             s += 1
             if(s > 3):
                 s = 0
-    st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/1KO_Mk_p5Mim1_GL96ToED9ZkZjmOcDK7/view?usp=sharing)")
+    st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/10-hQkVUWVwS8UR1E9UpNfWmhccTNNaMr/view?usp=sharing)")
 
 def video2audio(video):
     output = "audio_file.wav"
@@ -158,7 +158,7 @@ def Cut_Videos(video,start_time,end_time):
             return True
 
 with st.container():
-    st.error(":warning: Downloading from youtube is currently disabled by youtube. We are waiting for further updates from youtube")
+    st.warning(":warning: Downloading from youtube is currently disabled by youtube. We are waiting for further updates from youtube. Till then you can use our desktop app for downloading from youtube")
     st.title("Format Changer App")
     st.header("Hi I am your app to change the format of your files: ")
     st.write("---")
@@ -446,6 +446,6 @@ with st.container():
     with right_middle:
         st.subheader("Size issue on the website?")
         st.write("Try our desktop app version: ")
-        st.write("[Download from here](https://drive.google.com/file/d/1KO_Mk_p5Mim1_GL96ToED9ZkZjmOcDK7/view?usp=sharing)")
+        st.write("[Download from here](https://drive.google.com/file/d/10-hQkVUWVwS8UR1E9UpNfWmhccTNNaMr/view?usp=sharing)")
     with right:
         st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
