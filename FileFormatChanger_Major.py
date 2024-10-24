@@ -5,8 +5,8 @@ from moviepy.video.fx.speedx import speedx
 import streamlit as st
 from moviepy.editor import *
 from proglog import ProgressBarLogger
-from pytube import YouTube
-from pytube import Playlist
+from pytubefix import YouTube
+from pytubefix import Playlist
 from pytube.innertube import _default_clients
 from zipfile import ZipFile
 from PIL import Image
