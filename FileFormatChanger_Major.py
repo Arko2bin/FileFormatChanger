@@ -158,7 +158,7 @@ def Cut_Videos(video,start_time,end_time):
             return True
 
 with st.container():
-    st.success(":warning: Downloading from youtube is currently disabled by youtube. We are waiting for further updates from youtube. Till then you can use our desktop app for downloading from youtube")
+    #st.success(":warning: Downloading from youtube is currently disabled by youtube. We are waiting for further updates from youtube. Till then you can use our desktop app for downloading from youtube")
     st.title("Format Changer App")
     st.header("Hi I am your app to change the format of your files: ")
     st.write("---")
@@ -214,13 +214,13 @@ with st.container():
                 with open(image.name,'wb') as source:
                     source.write(image.read())
                 image = Image.open(image.name)
-                image.resize((1920,1080))
+                image.resize((1280,720))
                 image.save('temp_image.png')
                 clips.append(ImageClip('temp_image.png').set_duration(5))
                 os.remove('temp_image.png')
             status = st.progress(0)
             concat_clip = concatenate_videoclips(clips, method="compose")
-            concat_clip.write_videofile("output.mp4", fps=24,logger=logger)
+            concat_clip.write_videofile("output.mp4", codec="libx264" ,fps=24,logger=logger)
             st.video('output.mp4')
             os.remove('output.mp4')
             for image in images:
