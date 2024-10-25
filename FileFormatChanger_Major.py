@@ -7,7 +7,7 @@ from moviepy.editor import *
 from proglog import ProgressBarLogger
 from pytubefix import YouTube
 from pytubefix import Playlist
-from pytube.innertube import _default_clients
+from pytubefix.innertube import _default_clients
 from zipfile import ZipFile
 from PIL import Image
 from gtts import gTTS
