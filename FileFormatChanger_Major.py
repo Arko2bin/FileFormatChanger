@@ -86,7 +86,7 @@ def Youtube_casts(url):
 def Youtube_cast_po(url):
     cols = st.columns(4)
     s = 0
-    download = YouTube(url)
+    download = YouTube(url,use_oauth=True,allow_oauth_cache=True)
     for video in download.streams.filter(progressive=True,resolution='360p'):
         with cols[s]:
             st.write("[Download => " + str(video.resolution) + " (" +
