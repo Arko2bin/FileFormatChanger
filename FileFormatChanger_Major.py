@@ -66,7 +66,7 @@ def video_filesize(video):
 def Youtube_casts(url):
     cols = st.columns(4)
     s = 0
-    Download = YouTube(url,use_po_token=True)
+    Download = YouTube(url)
     for video in Download.streams:
         with cols[s]:
             if(video.is_progressive):
@@ -180,7 +180,7 @@ with st.container():
             video2audio(video)
             os.remove(video_file.name)
         elif(online_File):
-            Download = YouTube(online_File,use_po_token=True)
+            Download = YouTube(online_File)
             try:
                 file = Download.streams.filter(only_audio=True)[0].url
                 st.write("Here is your file => [View/Download](" + file + ")")
@@ -236,7 +236,7 @@ with st.container():
         if('video.mp4' not in os.listdir()):
             if(online_video_File):
                 video = "video.mp4"
-                Download = YouTube(online_video_File,use_po_token=True)
+                Download = YouTube(online_video_File)
                 file_size = int(Download.streams.filter(only_video=True, file_extension='mp4')[0].filesize)
                 if(round(file_size / 1048576, 2) <= 250):
                     r = requests.get(Download.streams.filter(only_video=True, file_extension='mp4')[0].url,stream=True)
