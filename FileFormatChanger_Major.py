@@ -83,6 +83,19 @@ def Youtube_casts(url):
                 s = 0
     st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/10-hQkVUWVwS8UR1E9UpNfWmhccTNNaMr/view?usp=sharing)")
 
+def Youtube_cast_po(url):
+    cols = st.columns(4)
+    s = 0
+    download = YouTube(url)
+    for video in download.streams.filter(progressive=True,resolution='360p'):
+        with cols[s]:
+            st.write("[Download => " + str(video.resolution) + " (" +
+                     video_filesize(video) + ")(:sound:)](" + video.url + ")")
+            s += 1
+            if (s > 3):
+                s = 0
+    st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/10-hQkVUWVwS8UR1E9UpNfWmhccTNNaMr/view?usp=sharing)")
+
 def video2audio(video):
     output = "audio_file.wav"
     video = VideoFileClip(video)
@@ -418,7 +431,7 @@ with st.container():
     url = st.text_input(label="Enter youtube URL: ")
     if(url):
         if("playlist" not in url):
-            Youtube_casts(url)
+            Youtube_cast_po(url)
         else:
             Player = Playlist(url)
             videos = ["--Select--"]
