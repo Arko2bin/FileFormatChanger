@@ -66,7 +66,7 @@ def video_filesize(video):
 def Youtube_casts(url):
     cols = st.columns(4)
     s = 0
-    Download = YouTube(url)
+    Download = YouTube(url,use_oauth=True,allow_oauth_cache=True)
     for video in Download.streams:
         with cols[s]:
             if(video.is_progressive):
@@ -80,19 +80,6 @@ def Youtube_casts(url):
                          video_filesize(video) + ")(:mute:)](" + video.url + ")")
             s += 1
             if(s > 3):
-                s = 0
-    st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/10-hQkVUWVwS8UR1E9UpNfWmhccTNNaMr/view?usp=sharing)")
-
-def Youtube_cast_po(url):
-    cols = st.columns(4)
-    s = 0
-    download = YouTube(url,use_oauth=True,allow_oauth_cache=True)
-    for video in download.streams.filter(progressive=True,resolution='360p'):
-        with cols[s]:
-            st.write("[Download => " + str(video.resolution) + " (" +
-                     video_filesize(video) + ")(:sound:)](" + video.url + ")")
-            s += 1
-            if (s > 3):
                 s = 0
     st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/10-hQkVUWVwS8UR1E9UpNfWmhccTNNaMr/view?usp=sharing)")
 
@@ -193,7 +180,7 @@ with st.container():
             video2audio(video)
             os.remove(video_file.name)
         elif(online_File):
-            Download = YouTube(online_File)
+            Download = YouTube(online_File,use_oauth=True,allow_oauth_cache=True)
             try:
                 file = Download.streams.filter(only_audio=True)[0].url
                 st.write("Here is your file => [View/Download](" + file + ")")
@@ -249,7 +236,7 @@ with st.container():
         if('video.mp4' not in os.listdir()):
             if(online_video_File):
                 video = "video.mp4"
-                Download = YouTube(online_video_File)
+                Download = YouTube(online_video_File,use_oauth=True,allow_oauth_cache=True)
                 file_size = int(Download.streams.filter(only_video=True, file_extension='mp4')[0].filesize)
                 if(round(file_size / 1048576, 2) <= 250):
                     r = requests.get(Download.streams.filter(only_video=True, file_extension='mp4')[0].url,stream=True)
@@ -272,7 +259,7 @@ with st.container():
         if('audio.wav' not in os.listdir()):
             if(online_audio_File):
                 audio = "audio.wav"
-                Download = YouTube(online_audio_File)
+                Download = YouTube(online_audio_File,use_oauth=True,allow_oauth_cache=True)
                 r = requests.get(Download.streams.filter(type="audio",mime_type="audio/mp4")[0].url,stream=True)
                 file_size = int(Download.streams.filter(type="audio", mime_type="audio/mp4")[0].filesize)
                 if(round(file_size / 1048576, 2) <= 250):
@@ -337,7 +324,7 @@ with st.container():
         online_File = st.text_input("Enter youtube link: ")
         if(online_File and "cutter.mp4" not in os.listdir()):
             video = "cutter.mp4"
-            Download = YouTube(online_File)
+            Download = YouTube(online_File,use_oauth=True,allow_oauth_cache=True)
             file_size = int(Download.streams.get_highest_resolution().filesize)
             if (round(file_size / 1048576, 2) <= 250):
                 r = requests.get(Download.streams.get_highest_resolution().url, stream=True)
@@ -431,7 +418,7 @@ with st.container():
     url = st.text_input(label="Enter youtube URL: ")
     if(url):
         if("playlist" not in url):
-            Youtube_cast_po(url)
+            Youtube_casts(url)
         else:
             Player = Playlist(url)
             videos = ["--Select--"]
