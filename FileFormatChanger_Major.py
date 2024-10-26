@@ -158,7 +158,7 @@ def Cut_Videos(video,start_time,end_time):
             return True
 
 with st.container():
-    #st.success(":warning: Downloading from youtube is currently disabled by youtube. We are waiting for further updates from youtube. Till then you can use our desktop app for downloading from youtube")
+    st.success(":warning: Downloading from Youtube is now login specific, You can use our desktop app for downloading from youtube")
     st.title("Format Changer App")
     st.header("Hi I am your app to change the format of your files: ")
     st.write("---")
@@ -424,7 +424,7 @@ with st.container():
             videos = ["--Select--"]
             urls = ["--select--"]
             for i in Player.video_urls:
-                name = YouTube(i)
+                name = YouTube(i,use_oauth=True,allow_oauth_cache=True)
                 videos.append(name.title)
                 urls.append(i)
             sec_vid = st.selectbox("Choose the video: ",videos)
