@@ -158,7 +158,7 @@ def Cut_Videos(video,start_time,end_time):
             return True
 
 with st.container():
-    st.success(":warning: Downloading from Youtube is now login specific, You can use our desktop app for downloading from youtube")
+    st.success(":warning: Downloading from Youtube is now login specific, You have to use our desktop app for downloading from youtube")
     st.title("Format Changer App")
     st.header("Hi I am your app to change the format of your files: ")
     st.write("---")
