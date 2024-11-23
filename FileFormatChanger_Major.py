@@ -5,14 +5,10 @@ from moviepy.video.fx.speedx import speedx
 import streamlit as st
 from moviepy.editor import *
 from proglog import ProgressBarLogger
-from pytubefix import YouTube
-from pytubefix import Playlist
-from pytubefix.innertube import _default_clients
 from zipfile import ZipFile
 from PIL import Image
 from gtts import gTTS
 import pytesseract
-import requests
 import os
 
 class MyBarLogger(ProgressBarLogger):
@@ -29,7 +25,6 @@ class MyBarLogger(ProgressBarLogger):
 
 st.set_page_config(page_title='File Converter App',layout="wide",page_icon="https://cdn.movavi.io/pages/0012/67/f97f4053080a1d1ecc3e23c4095de7e73522ea17.png")
 logger = MyBarLogger()
-_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 hide_streamlit_style = """
                 <style>
                 #MainMenu {visibility: hidden;}
@@ -63,25 +58,6 @@ def video_filesize(video):
         return str(round(video.filesize / (1024 * 1024), 2)) + "MB"
     else:
         return str(round(video.filesize / (1024), 2)) + "KB"
-def Youtube_casts(url):
-    cols = st.columns(4)
-    s = 0
-    Download = YouTube(url,use_oauth=True,allow_oauth_cache=True)
-    for video in Download.streams:
-        with cols[s]:
-            if(video.is_progressive):
-                st.write("[Download => " + str(video.resolution) + " (" +
-                    video_filesize(video) + ")(:sound:)](" + video.url + ")")
-            elif(video.resolution == None):
-                st.write("[Download => 	:x: (" +
-                         video_filesize(video) + ")(:sound:)](" + video.url + ")")
-            else:
-                st.write("[Download => " + str(video.resolution) + " (" +
-                         video_filesize(video) + ")(:mute:)](" + video.url + ")")
-            s += 1
-            if(s > 3):
-                s = 0
-    st.error("If not working you can try by downloading our desktop app [click here](https://drive.google.com/file/d/1fse7etdXUlLsIslZvAri5b2w1CazHZEy/view?usp=sharing)")
 
 def video2audio(video):
     output = "audio_file.wav"
@@ -170,8 +146,6 @@ with st.container():
     with left:
         st.subheader("Convert video files to audio files: ")
         video_file = st.file_uploader("Choose a video file", type=['mp4', 'avi'])
-        st.subheader("OR")
-        online_File = st.text_input("Enter Youtube URL: ")
         if(video_file):
             video = video_file.name
             with open(video,"wb") as f:
@@ -179,32 +153,6 @@ with st.container():
             status = st.progress(0)
             video2audio(video)
             os.remove(video_file.name)
-        elif(online_File):
-            Download = YouTube(online_File,use_oauth=True,allow_oauth_cache=True)
-            try:
-                file = Download.streams.filter(only_audio=True)[0].url
-                st.write("Here is your file => [View/Download](" + file + ")")
-            except Exception as e:
-                try:
-                    #trying to download the video and then processing the output from the downloaded video
-                    st.warning("Getting the video file...")
-                    file = Download.streams.filter(only_audio=True)[0].url
-                    file_size = Download.streams.filter(only_audio=True)[0].filesize
-                    r = requests.get(file,stream=True)
-                    st.warning("Downloading your video file...." + str(round(file_size / 1048576, 2)) + " MB")
-                    status = st.progress(0)
-                    with open('video.mp4', 'wb') as f:
-                        downloaded = 0
-                        for data in r.iter_content(chunk_size=1024):
-                            f.write(data)
-                            downloaded += len(data)
-                            progress = (downloaded / file_size) * 100
-                            status.progress(int(progress))
-                    st.success("Now processing the audio from the video...")
-                    video2audio('video.mp4')
-                    os.remove('video.mp4')
-                except Exception as e:
-                    st.error(e)
 
         st.subheader("Combine images to a video")
         images = st.file_uploader("Choose the image files: ",type = ['png','jpeg','jpg'],accept_multiple_files=True)
@@ -228,53 +176,13 @@ with st.container():
     with right:
         st.subheader("Combine audio and video files: ")
         video_file = st.file_uploader("Choose your video file: ",type=['mp4','avi'])
-        st.write("OR")
-        online_video_File = st.text_input("Enter video youtube link: ")
         audio_file = st.file_uploader("Choose your audio file: ",type=['mp3','wav'])
-        st.write("OR")
-        online_audio_File = st.text_input("Enter audio youtube link: ")
         if('video.mp4' not in os.listdir()):
-            if(online_video_File):
-                video = "video.mp4"
-                Download = YouTube(online_video_File,use_oauth=True,allow_oauth_cache=True)
-                file_size = int(Download.streams.filter(only_video=True, file_extension='mp4')[0].filesize)
-                if(round(file_size / 1048576, 2) <= 250):
-                    r = requests.get(Download.streams.filter(only_video=True, file_extension='mp4')[0].url,stream=True)
-                    st.warning("Downloading your video file...." + str(round(file_size / 1048576, 2)) + " MB")
-                    status = st.progress(0)
-                    with open(video, 'wb') as f:
-                        downloaded = 0
-                        for data in r.iter_content(chunk_size=1024):
-                            f.write(data)
-                            downloaded += len(data)
-                            progress = (downloaded / file_size) * 100
-                            status.progress(int(progress))
-                    st.success("Video file downloaded successfully")
-                else:
-                    st.error("This file is over 250MB max size allowed is 250MB")
             if (video_file):
                 video = "video.mp4"
                 with open('video.mp4', "wb") as f:
                     f.write(video_file.read())
         if('audio.wav' not in os.listdir()):
-            if(online_audio_File):
-                audio = "audio.wav"
-                Download = YouTube(online_audio_File,use_oauth=True,allow_oauth_cache=True)
-                r = requests.get(Download.streams.filter(type="audio",mime_type="audio/mp4")[0].url,stream=True)
-                file_size = int(Download.streams.filter(type="audio", mime_type="audio/mp4")[0].filesize)
-                if(round(file_size / 1048576, 2) <= 250):
-                    st.warning("Downloading your audio file...." + str(round(file_size / 1048576,2)) + " MB")
-                    status = st.progress(0)
-                    with open(audio, 'wb') as f:
-                        downloaded = 0
-                        for data in r.iter_content(chunk_size=1024):
-                            f.write(data)
-                            downloaded += len(data)
-                            progress = (downloaded / file_size) * 100
-                            status.progress(int(progress))
-                    st.success("Audio file downloaded successfully")
-                else:
-                    st.error("This file is over 250MB Max size allowed is 250MB")
             if (audio_file):
                 audio = "audio.wav"
                 with open('audio.wav', "wb") as f:
@@ -320,28 +228,7 @@ with st.container():
         start_time = ""
         end_time = ""
         offline_file = st.file_uploader(label="Upload your video file",type=['mp4','avi'])
-        st.write("OR")
-        online_File = st.text_input("Enter youtube link: ")
-        if(online_File and "cutter.mp4" not in os.listdir()):
-            video = "cutter.mp4"
-            Download = YouTube(online_File,use_oauth=True,allow_oauth_cache=True)
-            file_size = int(Download.streams.get_highest_resolution().filesize)
-            if (round(file_size / 1048576, 2) <= 250):
-                r = requests.get(Download.streams.get_highest_resolution().url, stream=True)
-                st.warning("Downloading your video file...." + str(round(file_size / 1048576, 2)) + " MB")
-                status = st.progress(0)
-                with open(video, 'wb') as f:
-                    downloaded = 0
-                    for data in r.iter_content(chunk_size=1024):
-                        f.write(data)
-                        downloaded += len(data)
-                        progress = (downloaded / file_size) * 100
-                        status.progress(int(progress))
-                st.success("Video file downloaded successfully")
-                st.video("cutter.mp4")
-            else:
-                st.error("This file is over 250MB max size allowed is 250MB")
-        elif(offline_file and "cutter.mp4" not in os.listdir()):
+        if(offline_file and "cutter.mp4" not in os.listdir()):
             video = "cutter.mp4"
             with open(video, "wb") as f:
                 f.write(offline_file.read())
@@ -412,27 +299,6 @@ with st.container():
             output = remove(image)
             st.image(output)
             st.success("Success!")
-
-with st.container():
-    st.header("Youtube video downloader: ")
-    url = st.text_input(label="Enter youtube URL: ")
-    if(url):
-        if("playlist" not in url):
-            Youtube_casts(url)
-        else:
-            Player = Playlist(url)
-            videos = ["--Select--"]
-            urls = ["--select--"]
-            for i in Player.video_urls:
-                name = YouTube(i,use_oauth=True,allow_oauth_cache=True)
-                videos.append(name.title)
-                urls.append(i)
-            sec_vid = st.selectbox("Choose the video: ",videos)
-            if(sec_vid != "--Select--"):
-                st.success("You choose = " + sec_vid)
-                Youtube_casts(urls[videos.index(sec_vid)])
-
-
 
 with st.container():
     st.write("---")
