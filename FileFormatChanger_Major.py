@@ -312,6 +312,6 @@ with st.container():
     with right_middle:
         st.subheader("Size issue on the website?")
         st.write("Try our desktop app version: ")
-        st.write("[Download from here](https://drive.google.com/file/d/1Tp7niRNs9iCpj60R2sUaXHCwkqeq-AJi/view?usp=sharing)")
+        st.write("[Download from here](https://drive.google.com/file/d/1L6_sLCcZZAObPk_n3JKGAU1jID2N1DSs/view?usp=sharing)")
     with right:
         st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
