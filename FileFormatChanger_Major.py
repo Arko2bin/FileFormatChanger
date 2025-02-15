@@ -9,6 +9,7 @@ from zipfile import ZipFile
 from PIL import Image
 from gtts import gTTS
 import pytesseract
+import subprocess
 import os
 
 class MyBarLogger(ProgressBarLogger):
@@ -132,9 +133,42 @@ def Cut_Videos(video,start_time,end_time):
             os.remove("cutted file.mp4")
             video.close()
             return True
+def run_yt_dlp(command):
+
+    # Start the subprocess and capture the output
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+    t = st.empty()
+    # Read the output in real-time and print it
+    for line in iter(process.stdout.readline, ''):
+        print(line, end='')  # Print the line from the process
+        t.write(line)
+
+    # Handle any errors
+    for line in iter(process.stderr.readline, ''):
+        print(f"ERROR: {line}", end='')  # Print any error messages
+        t.write(f"ERROR: {line}")
+
+    for file in os.listdir():
+        if('.webm' in file or '.mp4' in file):
+            st.video(file)
+            os.remove(file)
+        if('.mp3' in file or '.wav' in file or '.opus' in file):
+            st.audio(file)
+            os.remove(file)
+
+    process.stdout.close()
+    process.stderr.close()
+    process.wait()
+def yt_dlp(stream,url):
+    scripts = {
+        'Audio Only':f'yt-dlp -x {url}',
+        'Video only Best quality availabe': f'yt-dlp -f "bestvideo[height<=1080]" {url}',
+        'Video & Audio': f'yt-dlp -f "best[height<=1080]" {url}',
+    }
+    run_yt_dlp(command=scripts[stream])
 
 with st.container():
-    st.success(":warning: Downloading from Youtube is now login specific, You have to use our desktop app for downloading from youtube")
+    st.success("Use our desktop app for downloading subtitles")
     st.title("Format Changer App")
     st.header("Hi I am your app to change the format of your files: ")
     st.write("---")
@@ -299,6 +333,15 @@ with st.container():
             output = remove(image)
             st.image(output)
             st.success("Success!")
+
+with st.container():
+    st.header("Youtube Video Downloader")
+    link = st.text_input("Enter Youtube Url and hit enter")
+    if(link):
+        streams = ['--Choose Stream--','Audio Only','Video & Audio','Video only Best quality availabe']
+        stream = st.selectbox("Choose Video Stream: ",streams)
+        if(stream != '--Choose Stream--'):
+            yt_dlp(stream=stream,url=link)
 
 with st.container():
     st.write("---")
