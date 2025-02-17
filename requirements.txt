@@ -5,4 +5,5 @@ proglog==0.1.10
 pytesseract==0.3.10
 rembg==2.0.55
 streamlit==1.17.0
+numpy==1.19.5
 altair<5
