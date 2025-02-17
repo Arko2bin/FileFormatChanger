@@ -4,7 +4,5 @@ Pillow==11.1.0
 proglog==0.1.10
 pytesseract==0.3.10
 rembg==2.0.55
-numpy==1.19.5
-setuptools==75.8.0
 streamlit==1.17.0
 altair<5
