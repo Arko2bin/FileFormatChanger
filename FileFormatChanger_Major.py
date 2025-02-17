@@ -160,10 +160,13 @@ def run_yt_dlp(command):
     process.stderr.close()
     process.wait()
 def yt_dlp(stream,url):
+    cwd = os.getcwd()
+    # Assuming yt-dlp is in the current directory, or provide the full path to the yt-dlp executable
+    yt_dlp_path = os.path.join(cwd, "yt-dlp")
     scripts = {
-        'Audio Only':f'yt-dlp -x {url}',
-        'Video only Best quality availabe': f'yt-dlp -f "bestvideo[height<=1080]" {url}',
-        'Video & Audio': f'yt-dlp -f "best[height<=1080]" {url}',
+        'Audio Only':f'{yt_dlp_path} -x {url}',
+        'Video only Best quality availabe': f'{yt_dlp_path} -f "bestvideo[height<=1080]" {url}',
+        'Video & Audio': f'{yt_dlp_path} -f "best[height<=1080]" {url}',
     }
     run_yt_dlp(command=scripts[stream])
 
