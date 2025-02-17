@@ -171,7 +171,7 @@ def yt_dlp(stream,url):
     run_yt_dlp(command=scripts[stream])
 
 with st.container():
-    st.success("Use our desktop app for downloading subtitles")
+    st.success("Use our desktop app for downloading Youtube Videos")
     st.title("Format Changer App")
     st.header("Hi I am your app to change the format of your files: ")
     st.write("---")
@@ -337,14 +337,14 @@ with st.container():
             st.image(output)
             st.success("Success!")
 
-with st.container():
-    st.header("Youtube Video Downloader")
-    link = st.text_input("Enter Youtube Url and hit enter")
-    if(link):
-        streams = ['--Choose Stream--','Audio Only','Video & Audio','Video only Best quality availabe']
-        stream = st.selectbox("Choose Video Stream: ",streams)
-        if(stream != '--Choose Stream--'):
-            yt_dlp(stream=stream,url=link)
+#with st.container():
+ #   st.header("Youtube Video Downloader")
+  #  link = st.text_input("Enter Youtube Url and hit enter")
+   # if(link):
+    #    streams = ['--Choose Stream--','Audio Only','Video & Audio','Video only Best quality availabe']
+     #   stream = st.selectbox("Choose Video Stream: ",streams)
+      #  if(stream != '--Choose Stream--'):
+       #     yt_dlp(stream=stream,url=link)
 
 with st.container():
     st.write("---")
