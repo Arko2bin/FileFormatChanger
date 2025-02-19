@@ -356,8 +356,8 @@ with st.container():
         st.subheader("Explore our channel")
         st.write("[Check out here>](https://www.youtube.com/c/robin2bin)")
     with right_middle:
-        st.subheader("Size issue on the website?")
+        st.subheader("Issue on the website?")
         st.write("Try our desktop app version: ")
-        st.write("[Download from here](https://drive.google.com/file/d/1L6_sLCcZZAObPk_n3JKGAU1jID2N1DSs/view?usp=sharing)")
+        st.write("[Download from here](https://drive.google.com/file/d/1vf58Ja2Dhbnv7G_BAtBVCsJ-MoGSAZhz/view?usp=sharing)")
     with right:
         st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
