@@ -358,6 +358,6 @@ with st.container():
     with right_middle:
         st.subheader("Issue on the website?")
         st.write("Try our desktop app version: ")
-        st.write("[Download from here](https://drive.google.com/file/d/1k1onpdnUo1dzsd4AWYJoVQppyxCAC7cn/view?usp=sharing)")
+        st.write("[Download from here](https://drive.google.com/file/d/1DG7a5b1qiz3MBpWHjUBfey8HhywIiWd6/view?usp=sharing)")
     with right:
         st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
