@@ -360,4 +360,4 @@ with st.container():
         st.write("Try our desktop app version: ")
         st.write("[Download from here](https://drive.google.com/file/d/1DG7a5b1qiz3MBpWHjUBfey8HhywIiWd6/view?usp=sharing)")
     with right:
-        st.image("https://yt3.ggpht.com/ytc/AMLnZu-iZi_tq1cWBc90QKMCe3WSRXDn7L_ny9i57CSj=s900-c-k-c0x00ffffff-no-rj",width=200)
+        st.image("http://yt3.ggpht.com/Z9BW2j2Aat-IFtmiO6gMlLZ2w6xEv_SqbKpan5FMfe97tTbgPqS3uDyrptIyvk7gRyukgyPi8gk=s176-c-k-c0x00ffffff-no-rj-mo",width=200)
