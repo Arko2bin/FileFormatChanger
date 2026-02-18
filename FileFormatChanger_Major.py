@@ -9,7 +9,6 @@ from zipfile import ZipFile
 from PIL import Image
 from gtts import gTTS
 import pytesseract
-import subprocess
 import os
 
 class MyBarLogger(ProgressBarLogger):
@@ -133,42 +132,6 @@ def Cut_Videos(video,start_time,end_time):
             os.remove("cutted file.mp4")
             video.close()
             return True
-def run_yt_dlp(command):
-
-    # Start the subprocess and capture the output
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-    t = st.empty()
-    # Read the output in real-time and print it
-    for line in iter(process.stdout.readline, ''):
-        print(line, end='')  # Print the line from the process
-        t.write(line)
-
-    # Handle any errors
-    for line in iter(process.stderr.readline, ''):
-        print(f"ERROR: {line}", end='')  # Print any error messages
-        t.write(f"ERROR: {line}")
-
-    for file in os.listdir():
-        if('.webm' in file or '.mp4' in file):
-            st.video(file)
-            os.remove(file)
-        if('.mp3' in file or '.wav' in file or '.opus' in file):
-            st.audio(file)
-            os.remove(file)
-
-    process.stdout.close()
-    process.stderr.close()
-    process.wait()
-def yt_dlp(stream,url):
-    cwd = os.getcwd()
-    # Assuming yt-dlp is in the current directory, or provide the full path to the yt-dlp executable
-    yt_dlp_path = os.path.join(cwd, "yt-dlp.exe")
-    scripts = {
-        'Audio Only':f'{yt_dlp_path} -x {url}',
-        'Video only Best quality availabe': f'{yt_dlp_path} -f "bestvideo[height<=1080]" {url}',
-        'Video & Audio': f'{yt_dlp_path} -f "best[height<=1080]" {url}',
-    }
-    run_yt_dlp(command=scripts[stream])
 
 with st.container():
     st.success("Use our desktop app for downloading Youtube Videos")
