@@ -2,6 +2,7 @@ import shutil
 from io import BytesIO
 from rembg import remove
 from moviepy.video.fx.speedx import speedx
+from moviepy.video.tools.subtitles import SubtitlesClip
 import streamlit as st
 from moviepy.editor import *
 from proglog import ProgressBarLogger
@@ -50,6 +51,18 @@ def getEnv():
         env = "Local"
     return env
 
+def KBMBGB(filesize):
+    return_val = str(round(filesize,2)) + " B"
+    if (filesize >= 1000):
+        filesize = filesize / 1024
+        return_val =  str(round(filesize,2)) + " KB"
+    if(filesize >= 1000):
+        filesize = filesize/1024
+        return_val = str(round(filesize,2)) + " MB"
+    if (filesize >= 1000):
+        filesize = filesize / 1024
+        return_val = str(round(filesize,2)) + " GB"
+    return return_val
 
 def video_filesize(video):
     if(round(video.filesize / (1024*1024*1024),2) > 1):
@@ -133,6 +146,69 @@ def Cut_Videos(video,start_time,end_time):
             video.close()
             return True
 
+def isNumeric(val):
+    try:
+        int(val)
+        return True
+    except Exception as e:
+        return False
+
+def sbvtosrt(subtitles):
+    with open(subtitles, 'r', encoding='utf-8') as sub_data:
+        read_data = sub_data.read()
+    read_data = read_data.split('\n')
+    line_count = 0
+    with open("captions.srt",'w', encoding='utf-8') as f:
+        for line in range(0,len(read_data)-1):
+            if(":" in read_data[line]):
+                f.write(str(line_count+1)+"\n")
+                read_data[line] = read_data[line].replace(","," --> ")
+                read_data[line] = read_data[line].replace(".",",")
+                f.write(read_data[line]+"\n")
+                line_count += 1
+            else:
+                f.write(read_data[line]+"\n")
+        f.write("\n" + str(line_count+1))
+
+def vtttosrt(subtitles):
+    with open(subtitles, 'r', encoding='utf-8') as sub_data:
+        read_data = sub_data.read()
+    read_data = read_data.split('\n')[3:]
+    line_count = 1
+    for line in range(0, len(read_data) - 1):
+        if ('.' in read_data[line]):
+            read_data[line] = read_data[line].replace(".", ",")
+        elif (read_data[line] == ''):
+            read_data[line] = read_data[line].replace("", str(line_count))
+            line_count += 1
+
+    with open("captions.srt", 'w', encoding='utf-8') as f:
+        for line in range(0, len(read_data) - 1):
+            f.write(read_data[line] + "\n")
+            if (isNumeric(read_data[line + 1])):
+                f.write("\n")
+
+def add_subtitle(video,subtitles):
+    generator = lambda txt: TextClip(txt, font='Arial', fontsize=30, color='white', bg_color='black')
+    video = VideoFileClip(video)
+    if(".sbv" in subtitles.title()[len(subtitles.title())-5:]):
+        sbvtosrt(subtitles)
+        subtitles = SubtitlesClip("captions.srt", generator)
+    elif (".vtt" in subtitles.title()[len(subtitles.title())-5:]):
+        vtttosrt(subtitles)
+        subtitles = SubtitlesClip("captions.srt", generator)
+    else:
+        subtitles = SubtitlesClip(subtitles, generator)
+    result = CompositeVideoClip([video, subtitles.set_pos(('center', 'bottom'))])
+    result.write_videofile("Subtitles.mp4",logger=logger)
+    st.video('Subtitles.mp4')
+    os.remove('Subtitles.mp4')
+    os.remove('subtitles.srt')
+    result.close()
+
+
+#Service Line--------------------------------
+
 with st.container():
     st.success("Use our desktop app for downloading Youtube Videos")
     st.title("Format Changer App")
@@ -197,6 +273,69 @@ with st.container():
             if(result):
                 os.remove(video)
                 os.remove(audio)
+
+
+with st.container():
+    left,right = st.columns(2)
+    with left:
+        st.subheader("Convert subtitle files to srt:")
+        subtitle_file = st.file_uploader("Upload your subtitle file: ", type=['sbv', 'ttf'])
+        if (subtitle_file):
+            if (".sbv" in subtitle_file.name[len(subtitle_file.name) - 5:]):
+                subtitles = 'subtitles.sbv'
+                with open('subtitles.sbv', "wb") as f:
+                    f.write(subtitle_file.read())
+                sbvtosrt(subtitles)
+                with open('captions.srt', "rb") as file:
+                    btn = st.download_button(
+                        label='captions.srt' + " (" + f'{KBMBGB(os.stat("captions.srt").st_size)}' + ")",
+                        data=file,
+                        file_name='captions.srt',
+                        mime="application/octet-stream"
+                    )
+                os.remove('captions.srt')
+                os.remove(subtitles)
+            if (".vtt" in subtitle_file.name[len(subtitle_file.name) - 5:]):
+                subtitles = 'subtitles.vtt'
+                with open('subtitles.vtt', "wb") as f:
+                    f.write(subtitle_file.read())
+                vtttosrt(subtitles)
+                with open('captions.srt', "rb") as file:
+                    btn = st.download_button(
+                        label='captions.srt' + " (" + f'{KBMBGB(os.stat("captions.srt").st_size)}' + ")",
+                        data=file,
+                        file_name='captions.srt',
+                        mime="application/octet-stream"
+                    )
+                os.remove('captions.srt')
+                os.remove(subtitles)
+    with right:
+        st.subheader("Burn subtitles to video")
+        video_file = st.file_uploader("Select your video file: ", type=['mp4', 'avi'])
+        if (video_file):
+            video = "video.mp4"
+            with open('video.mp4', "wb") as f:
+                f.write(video_file.read())
+        subtitle_file = st.file_uploader("Select your subtitle file: ", type=['sbv', 'vtt', 'srt'])
+        if (subtitle_file):
+            if (".sbv" in subtitle_file.name[len(subtitle_file.name) - 5:]):
+                subtitles = 'captions.sbv'
+                with open('captions.sbv', "wb") as f:
+                    f.write(subtitle_file.read())
+            elif (".vtt" in subtitle_file.name[len(subtitle_file.name) - 5:]):
+                subtitles = 'captions.vtt'
+                with open('captions.vtt', "wb") as f:
+                    f.write(subtitle_file.read())
+            elif (".srt" in subtitle_file.name[len(subtitle_file.name) - 5:]):
+                subtitles = 'captions.srt'
+                with open('captions.srt', "wb") as f:
+                    f.write(subtitle_file.read())
+        if(video_file and subtitle_file):
+            status = st.progress(0)
+            add_subtitle(video,subtitles)
+            os.remove(video)
+            os.remove(subtitles)
+
 
 with st.container():
     left,right = st.columns(2)
